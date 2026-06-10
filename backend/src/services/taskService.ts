@@ -1,7 +1,7 @@
 import { prisma } from '../prisma';
 import { AppError } from '../middleware/errorHandler';
 import type { CreateTaskInput, UpdateTaskInput, TaskQueryInput } from '../utils/validation';
-import { Prisma } from '@prisma/client';
+import { Prisma, Task } from '@prisma/client';
 import { logActivity } from './activityService';
 import { getCached, setCache, delCache, cacheKey, delByPattern } from '../utils/redis';
 
@@ -69,7 +69,7 @@ export async function getTasks(userId: string, admin: boolean, query: TaskQueryI
   ]);
 
   if (query.sort === 'priority') {
-    tasks.sort((a, b) => {
+    tasks.sort((a: Task, b: Task) => {
       const diff = priorityOrder[a.priority] - priorityOrder[b.priority];
       return query.order === 'desc' ? -diff : diff;
     });
