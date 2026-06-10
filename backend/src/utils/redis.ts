@@ -55,9 +55,14 @@ export async function delByPattern(pattern: string) {
   const client = getClient();
   if (!client) return;
   try {
-    const keys = await client.keys(pattern);
-    if (keys.length > 0) {
-      await client.del(...keys);
-    }
+    let cursor = '0';
+    do {
+      const res = await client.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+      cursor = res[0];
+      const keys = res[1];
+      if (keys.length > 0) {
+        await client.del(...keys);
+      }
+    } while (cursor !== '0');
   } catch {}
 }

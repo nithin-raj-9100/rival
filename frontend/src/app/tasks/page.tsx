@@ -25,8 +25,8 @@ export default function TasksPage() {
 
   useSSE();
 
-  // Load all tasks (up to 1000) in background to compute accurate global dashboard stats
-  const { data: allTasksData } = useTasks({ limit: 1000 });
+  // Load all tasks (up to 50) in background to compute accurate global dashboard stats
+  const { data: allTasksData, isLoading: allTasksLoading } = useTasks({ limit: 50 });
 
   const query = {
     status: filters.status,
@@ -169,7 +169,11 @@ export default function TasksPage() {
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between group hover:border-primary/30 transition-all duration-300">
           <div className="space-y-1">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Tasks</span>
-            <p className="text-2xl font-extrabold text-foreground group-hover:scale-105 transition-transform origin-left">{totalTasks}</p>
+            {allTasksLoading ? (
+              <Skeleton className="h-8 w-12 rounded-lg my-0.5" />
+            ) : (
+              <p className="text-2xl font-extrabold text-foreground group-hover:scale-105 transition-transform origin-left">{totalTasks}</p>
+            )}
           </div>
           <div className="bg-primary/10 p-2.5 rounded-xl text-primary border border-primary/20">
             <ListTodo className="w-5 h-5" />
@@ -179,7 +183,11 @@ export default function TasksPage() {
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between group hover:border-emerald-500/30 transition-all duration-300">
           <div className="space-y-1">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Completed</span>
-            <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform origin-left">{completedTasks}</p>
+            {allTasksLoading ? (
+              <Skeleton className="h-8 w-12 rounded-lg my-0.5" />
+            ) : (
+              <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform origin-left">{completedTasks}</p>
+            )}
           </div>
           <div className="bg-emerald-500/10 p-2.5 rounded-xl text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             <ClipboardCheck className="w-5 h-5" />
@@ -189,7 +197,11 @@ export default function TasksPage() {
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between group hover:border-indigo-500/30 transition-all duration-300">
           <div className="space-y-1">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">In Progress</span>
-            <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform origin-left">{inProgressTasks}</p>
+            {allTasksLoading ? (
+              <Skeleton className="h-8 w-12 rounded-lg my-0.5" />
+            ) : (
+              <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform origin-left">{inProgressTasks}</p>
+            )}
           </div>
           <div className="bg-indigo-500/10 p-2.5 rounded-xl text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
             <TrendingUp className="w-5 h-5" />
@@ -199,7 +211,11 @@ export default function TasksPage() {
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between group hover:border-rose-500/30 transition-all duration-300">
           <div className="space-y-1">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">High Risk</span>
-            <p className="text-2xl font-extrabold text-rose-600 dark:text-rose-400 group-hover:scale-105 transition-transform origin-left">{highPriorityTasks}</p>
+            {allTasksLoading ? (
+              <Skeleton className="h-8 w-12 rounded-lg my-0.5" />
+            ) : (
+              <p className="text-2xl font-extrabold text-rose-600 dark:text-rose-400 group-hover:scale-105 transition-transform origin-left">{highPriorityTasks}</p>
+            )}
           </div>
           <div className="bg-rose-500/10 p-2.5 rounded-xl text-rose-600 dark:text-rose-400 border border-rose-500/20">
             <AlertCircle className="w-5 h-5" />

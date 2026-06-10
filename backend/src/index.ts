@@ -11,8 +11,9 @@ import eventRoutes from './routes/events';
 
 const app = express();
 
+const corsOrigin = process.env.CORS_ORIGIN;
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: corsOrigin === '*' ? true : (corsOrigin || 'http://localhost:3000'),
   credentials: true,
 }));
 

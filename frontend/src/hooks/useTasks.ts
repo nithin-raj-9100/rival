@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { useAuth } from '@/providers/AuthProvider';
 
 interface TaskQuery {
   status?: string;
@@ -14,9 +15,10 @@ interface TaskQuery {
   limit?: number;
 }
 
-export function useTasks(query: TaskQuery = {}) {
+export function useTasks(query: TaskQuery = {}, options?: { enabled?: boolean }) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['tasks', query],
+    queryKey: ['tasks', user?.id, query],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (query.status) params.set('status', query.status);
@@ -29,22 +31,25 @@ export function useTasks(query: TaskQuery = {}) {
       const res = await api.get(`/tasks?${params.toString()}`);
       return res.data;
     },
+    enabled: options?.enabled !== false && !!user,
   });
 }
 
 export function useTask(id: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['tasks', id],
+    queryKey: ['tasks', user?.id, id],
     queryFn: async () => {
       const res = await api.get(`/tasks/${id}`);
       return res.data;
     },
-    enabled: !!id,
+    enabled: !!id && !!user,
   });
 }
 
 export function useCreateTask() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (data: any) => {
@@ -52,7 +57,7 @@ export function useCreateTask() {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', user?.id] });
       toast.success('Task created');
     },
     onError: (err: any) => {
@@ -63,6 +68,7 @@ export function useCreateTask() {
 
 export function useUpdateTask() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ id, ...data }: any) => {
@@ -70,12 +76,12 @@ export function useUpdateTask() {
       return res.data;
     },
     onMutate: async ({ id, ...data }) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      const previousTasks = queryClient.getQueryData(['tasks']);
-      const previousTask = queryClient.getQueryData(['tasks', id]);
+      await queryClient.cancelQueries({ queryKey: ['tasks', user?.id] });
+      const previousTasks = queryClient.getQueryData(['tasks', user?.id]);
+      const previousTask = queryClient.getQueryData(['tasks', user?.id, id]);
 
-      queryClient.setQueryData(['tasks', id], (old: any) => old ? { ...old, ...data } : old);
-      queryClient.setQueriesData({ queryKey: ['tasks'], exact: false }, (old: any) => {
+      queryClient.setQueryData(['tasks', user?.id, id], (old: any) => old ? { ...old, ...data } : old);
+      queryClient.setQueriesData({ queryKey: ['tasks', user?.id], exact: false }, (old: any) => {
         if (!old?.tasks) return old;
         return {
           ...old,
@@ -87,31 +93,32 @@ export function useUpdateTask() {
     },
     onError: (err: any, { id }, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData(['tasks'], context.previousTasks);
+        queryClient.setQueryData(['tasks', user?.id], context.previousTasks);
       }
       if (context?.previousTask) {
-        queryClient.setQueryData(['tasks', id], context.previousTask);
+        queryClient.setQueryData(['tasks', user?.id, id], context.previousTask);
       }
       toast.error(err.response?.data?.error?.message || 'Failed to update task');
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', user?.id] });
     },
   });
 }
 
 export function useDeleteTask() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/tasks/${id}`);
     },
     onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      const previous = queryClient.getQueryData(['tasks']);
+      await queryClient.cancelQueries({ queryKey: ['tasks', user?.id] });
+      const previous = queryClient.getQueryData(['tasks', user?.id]);
 
-      queryClient.setQueriesData({ queryKey: ['tasks'], exact: false }, (old: any) => {
+      queryClient.setQueriesData({ queryKey: ['tasks', user?.id], exact: false }, (old: any) => {
         if (!old?.tasks) return old;
         return {
           ...old,
@@ -124,12 +131,12 @@ export function useDeleteTask() {
     },
     onError: (err: any, _id, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(['tasks'], context.previous);
+        queryClient.setQueryData(['tasks', user?.id], context.previous);
       }
       toast.error(err.response?.data?.error?.message || 'Failed to delete task');
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', user?.id] });
     },
     onSuccess: () => {
       toast.success('Task deleted');
@@ -137,9 +144,10 @@ export function useDeleteTask() {
   });
 }
 
-export function useAdminTasks(query: TaskQuery = {}) {
+export function useAdminTasks(query: TaskQuery = {}, options?: { enabled?: boolean }) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['admin-tasks', query],
+    queryKey: ['admin-tasks', user?.id, query],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (query.status) params.set('status', query.status);
@@ -152,28 +160,31 @@ export function useAdminTasks(query: TaskQuery = {}) {
       const res = await api.get(`/admin/tasks?${params.toString()}`);
       return res.data;
     },
+    enabled: options?.enabled !== false && !!user,
   });
 }
 
 export function useActivityLog(taskId: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['activity', taskId],
+    queryKey: ['activity', user?.id, taskId],
     queryFn: async () => {
       const res = await api.get(`/tasks/${taskId}/activity`);
       return res.data;
     },
-    enabled: !!taskId,
+    enabled: !!taskId && !!user,
   });
 }
 
 export function useAttachments(taskId: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['attachments', taskId],
+    queryKey: ['attachments', user?.id, taskId],
     queryFn: async () => {
       const res = await api.get(`/tasks/${taskId}/attachments`);
       return res.data;
     },
-    enabled: !!taskId,
+    enabled: !!taskId && !!user,
   });
 }
 
