@@ -48,6 +48,7 @@ jobs:
         working-directory: backend
         env:
           DATABASE_URL: postgresql://taskuser:taskpass@localhost:5432/taskdb
+          DIRECT_URL: postgresql://taskuser:taskpass@localhost:5432/taskdb
 
       - name: Type check
         run: pnpm --filter @task/backend lint
@@ -56,6 +57,7 @@ jobs:
         run: pnpm --filter @task/backend test
         env:
           DATABASE_URL: postgresql://taskuser:taskpass@localhost:5432/taskdb
+          DIRECT_URL: postgresql://taskuser:taskpass@localhost:5432/taskdb
           JWT_SECRET: test-secret
 
   frontend:
