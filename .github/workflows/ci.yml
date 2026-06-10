@@ -30,7 +30,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.25.0
 
       - uses: actions/setup-node@v4
         with:
@@ -39,7 +39,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        working-directory: backend
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
 
       - name: Run Prisma migrations
         run: pnpm prisma migrate deploy
@@ -48,12 +50,10 @@ jobs:
           DATABASE_URL: postgresql://taskuser:taskpass@localhost:5432/taskdb
 
       - name: Type check
-        run: pnpm lint
-        working-directory: backend
+        run: pnpm --filter @task/backend lint
 
       - name: Run tests
-        run: pnpm test
-        working-directory: backend
+        run: pnpm --filter @task/backend test
         env:
           DATABASE_URL: postgresql://taskuser:taskpass@localhost:5432/taskdb
           JWT_SECRET: test-secret
@@ -66,7 +66,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.25.0
 
       - uses: actions/setup-node@v4
         with:
@@ -75,12 +75,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        working-directory: frontend
 
       - name: Type check
-        run: pnpm typecheck
-        working-directory: frontend
+        run: pnpm --filter @task/frontend typecheck
 
       - name: Run tests
-        run: pnpm test
-        working-directory: frontend
+        run: pnpm --filter @task/frontend test
