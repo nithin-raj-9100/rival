@@ -1,20 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import multer from 'multer';
-import path from 'path';
-import crypto from 'crypto';
 import * as attachmentService from '../services/attachmentService';
 
-const storage = multer.diskStorage({
-  destination: process.env.UPLOAD_DIR || './uploads',
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${crypto.randomUUID()}${ext}`);
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880') },
   fileFilter: (_req, file, cb) => {
     const allowed = /^(image\/|application\/pdf|application\/msword|application\/vnd\.openxmlformats)/;

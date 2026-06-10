@@ -1,0 +1,21 @@
+{
+  "name": "task-manager",
+  "private": true,
+  "packageManager": "pnpm@10.25.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "db:generate": "turbo db:generate --filter=@task/backend",
+    "db:push": "turbo db:push --filter=@task/backend",
+    "db:migrate": "turbo db:migrate --filter=@task/backend",
+    "clean": "turbo clean",
+    "vercel:link": "cd frontend && vercel link",
+    "vercel:deploy": "cd frontend && vercel --prod"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.17"
+  }
+}
