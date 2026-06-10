@@ -13,7 +13,13 @@ const app = express();
 
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(cors({
-  origin: corsOrigin === '*' ? true : (corsOrigin || 'http://localhost:3000'),
+  origin: (origin, callback) => {
+    if (!origin || corsOrigin === '*' || origin === corsOrigin || (!corsOrigin && origin === 'http://localhost:3000')) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
   credentials: true,
 }));
 
