@@ -41,14 +41,14 @@ export function FiltersBar({
     >
       <div className="flex flex-1 flex-col sm:flex-row gap-3 items-stretch sm:items-center">
         {/* Search Field */}
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative w-full sm:max-w-xs sm:flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <Input
             aria-label="Search tasks by title or description"
             placeholder="Search tasks..."
             value={search || ''}
             onChange={(e) => onFilterChange('search', e.target.value)}
-            className="pl-9 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20 h-10 w-full rounded-lg"
+            className="pl-9 bg-background border-border shadow-sm focus:border-primary focus:ring-primary/20 h-10 w-full rounded-lg transition-all"
           />
         </div>
 
@@ -68,7 +68,7 @@ export function FiltersBar({
                       TODO: 'To Do',
                       IN_PROGRESS: 'In Progress',
                       DONE: 'Done',
-                      };
+                    };
                     return labels[value] || value || 'Status';
                   }}
                 </SelectValue>
@@ -140,27 +140,23 @@ export function FiltersBar({
             variant="outline"
             size="icon"
             onClick={() => onFilterChange('order', order === 'asc' ? 'desc' : 'asc')}
-            className="h-10 w-10 border-border/60 bg-background/50 hover:bg-accent text-foreground focus-ring rounded-lg cursor-pointer"
+            className="h-10 w-10 bg-background border-border shadow-sm hover:bg-accent/50 text-foreground focus-ring rounded-lg cursor-pointer transition-all duration-200"
             aria-label={order === 'asc' ? 'Change sorting to descending' : 'Change sorting to ascending'}
           >
             <ArrowUpDown className="w-4 h-4" />
           </Button>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClear}
-            className={`h-10 w-10 hover:bg-destructive/10 hover:text-destructive focus-ring rounded-lg cursor-pointer transition-all duration-200 shrink-0 ${
-              (status || priority || search)
-                ? 'opacity-100 scale-100 pointer-events-auto'
-                : 'opacity-0 scale-90 pointer-events-none'
-            }`}
-            aria-label="Clear active filters"
-            aria-hidden={!(status || priority || search)}
-            tabIndex={(status || priority || search) ? 0 : -1}
-          >
-            <X className="w-4 h-4" />
-          </Button>
+          {(status || priority || search) && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClear}
+              className="h-10 w-10 hover:bg-destructive/10 hover:text-destructive focus-ring rounded-lg cursor-pointer transition-all duration-200 shrink-0 animate-in fade-in zoom-in-95 duration-150"
+              aria-label="Clear active filters"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -169,7 +165,7 @@ export function FiltersBar({
         <div
           role="radiogroup"
           aria-label="Select Task View"
-          className="flex bg-muted/70 p-1.5 rounded-xl border border-border/30 w-fit self-end md:self-auto"
+          className="flex items-center bg-muted/70 p-1 rounded-xl border border-border/30 w-fit self-end md:self-auto h-10 gap-1"
         >
           <Button
             role="radio"
