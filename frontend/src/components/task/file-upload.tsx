@@ -75,7 +75,7 @@ export function FileUpload({ onUpload, isPending, attachments }: FileUploadProps
                 <p className="text-xs text-muted-foreground">{formatSize(att.size)}</p>
               </div>
               <a
-                href={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000'}${att.url}`}
+                href={att.url}
                 target="_blank"
                 rel="noopener noreferrer"
               >

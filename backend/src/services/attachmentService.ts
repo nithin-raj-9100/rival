@@ -1,22 +1,10 @@
 import { prisma } from '../prisma';
 import { AppError } from '../middleware/errorHandler';
-import path from 'path';
-import crypto from 'crypto';
-import fs from 'fs';
+import { supabase } from '../utils/supabase';
 import { emitTaskEvent } from './taskService';
 
-const UPLOAD_DIR = process.env.UPLOAD_DIR || './uploads';
-
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-
-export function saveFile(file: Express.Multer.File): string {
-  const ext = path.extname(file.originalname);
-  const filename = `${crypto.randomUUID()}${ext}`;
-  const filepath = path.join(UPLOAD_DIR, filename);
-  fs.writeFileSync(filepath, file.buffer);
-  return filename;
+function getPublicUrl(path: string): string {
+  return `${process.env.SUPABASE_URL}/storage/v1/object/public/uploads/${path}`;
 }
 
 export async function addAttachment(taskId: string, userId: string, file: Express.Multer.File) {
@@ -28,8 +16,20 @@ export async function addAttachment(taskId: string, userId: string, file: Expres
     throw new AppError(403, 'FORBIDDEN', 'You can only add attachments to your own tasks');
   }
 
-  const filename = saveFile(file);
-  const url = `/uploads/${filename}`;
+  const filePath = `tasks/${taskId}/${Date.now()}_${file.originalname}`;
+
+  const { error } = await supabase.storage
+    .from('uploads')
+    .upload(filePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new AppError(500, 'UPLOAD_FAILED', error.message);
+  }
+
+  const url = getPublicUrl(filePath);
 
   const attachment = await prisma.attachment.create({
     data: {
