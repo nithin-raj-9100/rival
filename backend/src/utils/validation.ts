@@ -33,7 +33,7 @@ export const taskQuerySchema = z.object({
   sort: z.enum(['dueDate', 'priority', 'createdAt']).optional().default('createdAt'),
   order: z.enum(['asc', 'desc']).optional().default('desc'),
   page: z.coerce.number().int().min(1).optional().default(1),
-  limit: z.coerce.number().int().min(1).max(50).optional().default(10),
+  limit: z.coerce.number().int().min(1).max(1000).optional().default(10),
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;
