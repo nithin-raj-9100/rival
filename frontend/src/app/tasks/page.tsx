@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTasks, useUpdateTask, useDeleteTask } from '@/hooks/useTasks';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useSSE } from '@/hooks/useSSE';
 import { TaskCard } from '@/components/task/task-card';
 import { FiltersBar } from '@/components/task/filters-bar';
@@ -28,10 +29,12 @@ export default function TasksPage() {
   // Load all tasks (up to 50) in background to compute accurate global dashboard stats
   const { data: allTasksData, isLoading: allTasksLoading } = useTasks({ limit: 50 });
 
+  const debouncedSearch = useDebounce(filters.search);
+
   const query = {
     status: filters.status,
     priority: filters.priority,
-    search: filters.search,
+    search: debouncedSearch,
     sort: filters.sort || 'createdAt',
     order: filters.order || 'desc',
     page: filters.page ? parseInt(filters.page) : 1,

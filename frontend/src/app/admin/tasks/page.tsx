@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useAdminTasks } from '@/hooks/useTasks';
+import { useDebounce } from '@/hooks/useDebounce';
 import { TaskCard } from '@/components/task/task-card';
 import { FiltersBar } from '@/components/task/filters-bar';
 import { Pagination } from '@/components/task/pagination';
@@ -19,10 +20,12 @@ export default function AdminTasksPage() {
     order: 'desc',
   });
 
+  const debouncedSearch = useDebounce(filters.search);
+
   const query = {
     status: filters.status,
     priority: filters.priority,
-    search: filters.search,
+    search: debouncedSearch,
     sort: filters.sort || 'createdAt',
     order: filters.order || 'desc',
     page: filters.page ? parseInt(filters.page) : 1,

@@ -190,6 +190,7 @@ export function useAttachments(taskId: string) {
 
 export function useUploadAttachment() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ taskId, file }: { taskId: string; file: File }) => {
@@ -201,7 +202,7 @@ export function useUploadAttachment() {
       return res.data;
     },
     onSuccess: (_data, { taskId }) => {
-      queryClient.invalidateQueries({ queryKey: ['attachments', taskId] });
+      queryClient.invalidateQueries({ queryKey: ['attachments', user?.id, taskId] });
       toast.success('File uploaded');
     },
     onError: (err: any) => {
