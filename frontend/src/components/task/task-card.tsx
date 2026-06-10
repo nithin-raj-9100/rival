@@ -1,22 +1,22 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Pencil, Trash2, Check } from 'lucide-react';
+import { Pencil, Trash2, Check, Calendar, Clock, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
-const statusColors: Record<string, string> = {
-  TODO: 'bg-gray-500',
-  IN_PROGRESS: 'bg-blue-500',
-  DONE: 'bg-green-500',
+const statusBadges: Record<string, { label: string; class: string }> = {
+  TODO: { label: 'To Do', class: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700' },
+  IN_PROGRESS: { label: 'In Progress', class: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60' },
+  DONE: { label: 'Done', class: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60' },
 };
 
-const priorityColors: Record<string, string> = {
-  LOW: 'bg-slate-600',
-  MEDIUM: 'bg-yellow-600',
-  HIGH: 'bg-red-600',
+const priorityClasses: Record<string, string> = {
+  LOW: 'neon-border-low',
+  MEDIUM: 'neon-border-medium',
+  HIGH: 'neon-border-high',
 };
 
 interface TaskCardProps {
@@ -31,45 +31,114 @@ interface TaskCardProps {
   onDelete?: (id: string) => void;
 }
 
-export function TaskCard({ id, title, description, status, priority, dueDate, createdAt, onMarkDone, onDelete }: TaskCardProps) {
+export function TaskCard({
+  id,
+  title,
+  description,
+  status,
+  priority,
+  dueDate,
+  createdAt,
+  onMarkDone,
+  onDelete,
+}: TaskCardProps) {
+  const isCompleted = status === 'DONE';
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <Link href={`/tasks/${id}`} className="hover:underline">
-              <CardTitle className="text-lg truncate">{title}</CardTitle>
+    <Card
+      draggable
+      onDragStart={handleDragStart}
+      className={`glass-card hover:shadow-xl transition-all duration-300 cursor-grab active:cursor-grabbing glow-hover select-none group relative overflow-hidden ${
+        priorityClasses[priority] || ''
+      } ${isCompleted ? 'opacity-80 hover:opacity-100' : ''}`}
+    >
+      <div className="p-5 flex flex-col justify-between h-full min-h-[160px] gap-4">
+        {/* Top Header Row */}
+        <div className="space-y-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <Link
+                href={`/tasks/${id}`}
+                className="hover:underline focus-ring rounded inline-block"
+                aria-label={`View details of task: ${title}`}
+              >
+                <h3 className={`text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-primary ${
+                  isCompleted ? 'line-through text-muted-foreground' : ''
+                }`}>
+                  {title}
+                </h3>
+              </Link>
+            </div>
+            
+            {/* Status Badge */}
+            <Badge variant="outline" className={`font-semibold shrink-0 uppercase tracking-wider text-[10px] py-0.5 px-2 ${statusBadges[status]?.class}`}>
+              {statusBadges[status]?.label || status}
+            </Badge>
+          </div>
+
+          {description && (
+            <p className={`text-xs leading-relaxed line-clamp-2 mt-1.5 ${
+              isCompleted ? 'text-muted-foreground/60' : 'text-muted-foreground'
+            }`}>
+              {description}
+            </p>
+          )}
+        </div>
+
+        {/* Bottom Info and Action Row */}
+        <div className="mt-auto pt-3 border-t border-border/40 flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-muted-foreground font-medium">
+            {dueDate && (
+              <span className="flex items-center gap-1.5" aria-label={`Due date: ${format(new Date(dueDate), 'MMM d, yyyy')}`}>
+                <Calendar className="w-3.5 h-3.5 text-muted-foreground/80" />
+                <span>{format(new Date(dueDate), 'MMM d, yyyy')}</span>
+              </span>
+            )}
+            <span className="flex items-center gap-1.5" aria-label={`Created on: ${format(new Date(createdAt), 'MMM d')}`}>
+              <Clock className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <span>{format(new Date(createdAt), 'MMM d')}</span>
+            </span>
+          </div>
+
+          {/* Quick Action buttons */}
+          <div className="flex items-center gap-1.5 shrink-0 opacity-90 sm:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+            <Link href={`/tasks/${id}`} className="focus-ring rounded" aria-label="View task details">
+              <Button size="icon" variant="ghost" className="h-7.5 w-7.5 rounded-md hover:bg-accent cursor-pointer">
+                <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+              </Button>
             </Link>
-            {description && (
-              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{description}</p>
+            
+            {!isCompleted && onMarkDone && (
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => onMarkDone(id)}
+                className="h-7.5 w-7.5 rounded-md border-border/80 hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-600 focus-ring cursor-pointer animate-check"
+                aria-label={`Mark task "${title}" as done`}
+              >
+                <Check className="w-3.5 h-3.5" />
+              </Button>
+            )}
+
+            {onDelete && (
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => onDelete(id)}
+                className="h-7.5 w-7.5 rounded-md border-border/80 hover:border-destructive/50 hover:bg-destructive/10 hover:text-destructive focus-ring cursor-pointer"
+                aria-label={`Delete task "${title}"`}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
             )}
           </div>
-          <Badge className={statusColors[status] || 'bg-gray-500'}>{status.replace('_', ' ')}</Badge>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-          <Badge variant="outline" className={priorityColors[priority] || ''}>
-            {priority}
-          </Badge>
-          {dueDate && (
-            <span>Due: {format(new Date(dueDate), 'MMM d, yyyy')}</span>
-          )}
-          <span className="ml-auto text-xs">Created: {format(new Date(createdAt), 'MMM d')}</span>
-        </div>
-        <div className="flex gap-2">
-          {status !== 'DONE' && onMarkDone && (
-            <Button size="sm" variant="outline" onClick={() => onMarkDone(id)}>
-              <Check className="w-4 h-4 mr-1" /> Done
-            </Button>
-          )}
-          {onDelete && (
-            <Button size="sm" variant="outline" onClick={() => onDelete(id)}>
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          )}
-        </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }
