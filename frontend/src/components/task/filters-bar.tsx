@@ -60,7 +60,7 @@ export function FiltersBar({
               value={status || 'all'}
               onValueChange={(v) => onFilterChange('status', v === 'all' ? '' : (v || ''))}
             >
-              <SelectTrigger aria-labelledby="status-filter-label" className="w-36 shrink-0 bg-background border-border h-10 rounded-xl cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
+              <SelectTrigger aria-labelledby="status-filter-label" className="w-36 shrink-0 bg-background border-border h-10 rounded-lg cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
                 <SelectValue placeholder="Status">
                   {(value) => {
                     const labels: Record<string, string> = {
@@ -68,12 +68,12 @@ export function FiltersBar({
                       TODO: 'To Do',
                       IN_PROGRESS: 'In Progress',
                       DONE: 'Done',
-                    };
+                      };
                     return labels[value] || value || 'Status';
                   }}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="glass-card">
+              <SelectContent className="bg-popover border border-border/80 shadow-lg rounded-lg min-w-[144px]">
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="TODO">To Do</SelectItem>
                 <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
@@ -88,7 +88,7 @@ export function FiltersBar({
               value={priority || 'all'}
               onValueChange={(v) => onFilterChange('priority', v === 'all' ? '' : (v || ''))}
             >
-              <SelectTrigger aria-labelledby="priority-filter-label" className="w-36 shrink-0 bg-background border-border h-10 rounded-xl cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
+              <SelectTrigger aria-labelledby="priority-filter-label" className="w-36 shrink-0 bg-background border-border h-10 rounded-lg cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
                 <SelectValue placeholder="Priority">
                   {(value) => {
                     const labels: Record<string, string> = {
@@ -101,7 +101,7 @@ export function FiltersBar({
                   }}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="glass-card">
+              <SelectContent className="bg-popover border border-border/80 shadow-lg rounded-lg min-w-[144px]">
                 <SelectItem value="all">All Priority</SelectItem>
                 <SelectItem value="LOW">Low</SelectItem>
                 <SelectItem value="MEDIUM">Medium</SelectItem>
@@ -116,7 +116,7 @@ export function FiltersBar({
               value={sort || 'createdAt'}
               onValueChange={(v) => onFilterChange('sort', v || 'createdAt')}
             >
-              <SelectTrigger aria-labelledby="sort-by-label" className="w-36 shrink-0 bg-background border-border h-10 rounded-xl cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
+              <SelectTrigger aria-labelledby="sort-by-label" className="w-36 shrink-0 bg-background border-border h-10 rounded-lg cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
                 <SelectValue placeholder="Sort by">
                   {(value) => {
                     const labels: Record<string, string> = {
@@ -128,7 +128,7 @@ export function FiltersBar({
                   }}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="glass-card">
+              <SelectContent className="bg-popover border border-border/80 shadow-lg rounded-lg min-w-[144px]">
                 <SelectItem value="createdAt">Created Date</SelectItem>
                 <SelectItem value="dueDate">Due Date</SelectItem>
                 <SelectItem value="priority">Priority</SelectItem>
@@ -140,7 +140,7 @@ export function FiltersBar({
             variant="outline"
             size="icon"
             onClick={() => onFilterChange('order', order === 'asc' ? 'desc' : 'asc')}
-            className="h-10 w-10 border-border/50 bg-background/50 hover:bg-accent text-foreground focus-ring rounded-lg cursor-pointer"
+            className="h-10 w-10 border-border/60 bg-background/50 hover:bg-accent text-foreground focus-ring rounded-lg cursor-pointer"
             aria-label={order === 'asc' ? 'Change sorting to descending' : 'Change sorting to ascending'}
           >
             <ArrowUpDown className="w-4 h-4" />

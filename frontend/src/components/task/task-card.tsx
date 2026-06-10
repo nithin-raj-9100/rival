@@ -8,9 +8,9 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 
 const statusBadges: Record<string, { label: string; class: string }> = {
-  TODO: { label: 'To Do', class: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700' },
-  IN_PROGRESS: { label: 'In Progress', class: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60' },
-  DONE: { label: 'Done', class: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60' },
+  TODO: { label: 'To Do', class: 'bg-secondary text-secondary-foreground border-border/80' },
+  IN_PROGRESS: { label: 'In Progress', class: 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/20 dark:text-primary dark:border-primary/30' },
+  DONE: { label: 'Done', class: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30' },
 };
 
 const priorityClasses: Record<string, string> = {
@@ -53,9 +53,9 @@ export function TaskCard({
     <Card
       draggable
       onDragStart={handleDragStart}
-      className={`glass-card hover:shadow-xl transition-all duration-300 cursor-grab active:cursor-grabbing glow-hover select-none group relative overflow-hidden ${
+      className={`glass-card hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-grab active:cursor-grabbing glow-hover select-none group relative overflow-hidden ${
         priorityClasses[priority] || ''
-      } ${isCompleted ? 'opacity-80 hover:opacity-100' : ''}`}
+      } ${isCompleted ? 'opacity-75 hover:opacity-100' : ''}`}
     >
       <div className="p-5 flex flex-col justify-between h-full min-h-[160px] gap-4">
         {/* Top Header Row */}
@@ -67,7 +67,7 @@ export function TaskCard({
                 className="hover:underline focus-ring rounded inline-block"
                 aria-label={`View details of task: ${title}`}
               >
-                <h3 className={`text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-primary ${
+                <h3 className={`text-sm font-bold tracking-tight text-foreground transition-colors group-hover:text-primary ${
                   isCompleted ? 'line-through text-muted-foreground' : ''
                 }`}>
                   {title}
@@ -76,14 +76,14 @@ export function TaskCard({
             </div>
             
             {/* Status Badge */}
-            <Badge variant="outline" className={`font-semibold shrink-0 uppercase tracking-wider text-[10px] py-0.5 px-2 ${statusBadges[status]?.class}`}>
+            <Badge variant="outline" className={`font-bold shrink-0 uppercase tracking-wider text-[9px] py-0.5 px-2 ${statusBadges[status]?.class}`}>
               {statusBadges[status]?.label || status}
             </Badge>
           </div>
 
           {description && (
-            <p className={`text-xs leading-relaxed line-clamp-2 mt-1.5 ${
-              isCompleted ? 'text-muted-foreground/60' : 'text-muted-foreground'
+            <p className={`text-xs leading-relaxed line-clamp-2 mt-2 font-medium ${
+              isCompleted ? 'text-muted-foreground/60' : 'text-foreground/80 dark:text-foreground/75'
             }`}>
               {description}
             </p>
@@ -92,7 +92,7 @@ export function TaskCard({
 
         {/* Bottom Info and Action Row */}
         <div className="mt-auto pt-3 border-t border-border/40 flex items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-muted-foreground font-medium">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/90 font-semibold">
             {dueDate && (
               <span className="flex items-center gap-1.5" aria-label={`Due date: ${format(new Date(dueDate), 'MMM d, yyyy')}`}>
                 <Calendar className="w-3.5 h-3.5 text-muted-foreground/80" />
@@ -100,25 +100,25 @@ export function TaskCard({
               </span>
             )}
             <span className="flex items-center gap-1.5" aria-label={`Created on: ${format(new Date(createdAt), 'MMM d')}`}>
-              <Clock className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <Clock className="w-3.5 h-3.5 text-muted-foreground/70" />
               <span>{format(new Date(createdAt), 'MMM d')}</span>
             </span>
           </div>
 
           {/* Quick Action buttons */}
-          <div className="flex items-center gap-1.5 shrink-0 opacity-90 sm:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+          <div className="flex items-center gap-1 shrink-0 opacity-90 sm:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
             <Link href={`/tasks/${id}`} className="focus-ring rounded" aria-label="View task details">
-              <Button size="icon" variant="ghost" className="h-7.5 w-7.5 rounded-md hover:bg-accent cursor-pointer">
+              <Button size="icon-sm" variant="ghost" className="rounded-md hover:bg-accent cursor-pointer">
                 <Eye className="w-3.5 h-3.5 text-muted-foreground" />
               </Button>
             </Link>
             
             {!isCompleted && onMarkDone && (
               <Button
-                size="icon"
+                size="icon-sm"
                 variant="outline"
                 onClick={() => onMarkDone(id)}
-                className="h-7.5 w-7.5 rounded-md border-border/80 hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-600 focus-ring cursor-pointer animate-check"
+                className="rounded-md border-border/85 hover:border-emerald-500/40 hover:bg-emerald-500/10 hover:text-emerald-600 focus-ring cursor-pointer animate-check"
                 aria-label={`Mark task "${title}" as done`}
               >
                 <Check className="w-3.5 h-3.5" />
@@ -127,10 +127,10 @@ export function TaskCard({
 
             {onDelete && (
               <Button
-                size="icon"
+                size="icon-sm"
                 variant="outline"
                 onClick={() => onDelete(id)}
-                className="h-7.5 w-7.5 rounded-md border-border/80 hover:border-destructive/50 hover:bg-destructive/10 hover:text-destructive focus-ring cursor-pointer"
+                className="rounded-md border-border/85 hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive focus-ring cursor-pointer"
                 aria-label={`Delete task "${title}"`}
               >
                 <Trash2 className="w-3.5 h-3.5" />

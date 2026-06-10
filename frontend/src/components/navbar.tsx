@@ -15,13 +15,13 @@ export function Navbar() {
       <div className="container mx-auto px-4 max-w-5xl flex items-center justify-between h-16">
         <Link
           href="/tasks"
-          className="flex items-center gap-2.5 font-bold text-lg bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent hover:opacity-90 transition-opacity focus-ring rounded"
+          className="flex items-center gap-2.5 font-bold text-lg hover:opacity-90 transition-opacity focus-ring rounded"
           aria-label="Task Manager Dashboard"
         >
-          <div className="bg-primary/10 p-1.5 rounded-lg text-primary border border-primary/20">
+          <div className="bg-primary/10 p-1.5 rounded-lg text-primary border border-primary/20 dark:bg-primary/20 dark:border-primary/30">
             <ClipboardList className="w-5 h-5" />
           </div>
-          <span className="tracking-tight text-foreground">Rival Task</span>
+          <span className="tracking-tight bg-gradient-to-r from-primary via-primary/95 to-primary/80 bg-clip-text text-transparent font-extrabold">Rival Task</span>
         </Link>
 
         <div className="flex items-center gap-3">
@@ -29,7 +29,7 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="hover:bg-accent/50 focus-ring rounded-lg cursor-pointer"
+            className="hover:bg-accent/60 focus-ring rounded-lg cursor-pointer"
             aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
           >
             <Sun className="w-4.5 h-4.5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-amber-500" />
@@ -40,17 +40,17 @@ export function Navbar() {
             <div className="flex items-center gap-3">
               {user.role === 'ADMIN' && (
                 <Link href="/admin/tasks" className="focus-ring rounded">
-                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-semibold uppercase tracking-wider hover:bg-red-500/10 hover:text-red-500 text-muted-foreground border border-transparent hover:border-red-500/20">
+                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-bold uppercase tracking-wider hover:bg-destructive/10 hover:text-destructive text-muted-foreground border border-transparent hover:border-destructive/20">
                     <ShieldAlert className="w-3.5 h-3.5" /> Admin
                   </Button>
                 </Link>
               )}
               <Link href="/tasks/new" className="focus-ring rounded hidden sm:inline-block">
-                <Button size="sm" className="font-semibold shadow-md shadow-primary/20 hover:shadow-primary/30 transition-all cursor-pointer">
+                <Button size="sm" className="font-bold shadow-md shadow-primary/15 hover:shadow-primary/25 transition-all cursor-pointer">
                   New Task
                 </Button>
               </Link>
-              <span className="text-xs font-medium text-muted-foreground bg-muted/65 px-2.5 py-1.5 rounded-full max-w-[150px] truncate hidden md:inline">
+              <span className="text-xs font-bold text-foreground/80 bg-secondary px-3 py-1 rounded-full max-w-[160px] truncate hidden md:inline border border-border/80">
                 {user.email}
               </span>
               <Button
@@ -66,12 +66,12 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/login" className="focus-ring rounded">
-                <Button variant="ghost" size="sm" className="font-semibold text-muted-foreground hover:text-foreground cursor-pointer">
+                <Button variant="ghost" size="sm" className="font-bold text-muted-foreground hover:text-foreground cursor-pointer">
                   Login
                 </Button>
               </Link>
               <Link href="/signup" className="focus-ring rounded">
-                <Button size="sm" className="font-semibold shadow-md shadow-primary/20 cursor-pointer">
+                <Button size="sm" className="font-bold shadow-md shadow-primary/15 cursor-pointer">
                   Sign Up
                 </Button>
               </Link>

@@ -7,6 +7,7 @@ import { TaskForm } from '@/components/task/task-form';
 import { ActivityTimeline } from '@/components/task/activity-timeline';
 import { FileUpload } from '@/components/task/file-upload';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Edit3, History, Paperclip, Loader2 } from 'lucide-react';

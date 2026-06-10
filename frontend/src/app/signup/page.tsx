@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signupSchema, SignupFormData } from '@/lib/validators';
+import { signupSchema } from '@/lib/validators';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -22,12 +22,12 @@ export default function SignupPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignupFormData>({
+  } = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit = async (data: SignupFormData) => {
+  const onSubmit = async (data: any) => {
     try {
       setError('');
       await signup(data.email, data.password);

@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { taskSchema, TaskFormData } from '@/lib/validators';
+import { taskSchema } from '@/lib/validators';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -17,8 +17,8 @@ import {
 import { Loader2, Save } from 'lucide-react';
 
 interface TaskFormProps {
-  defaultValues?: Partial<TaskFormData>;
-  onSubmit: (data: TaskFormData) => void;
+  defaultValues?: Record<string, any>;
+  onSubmit: (data: any) => void;
   isPending?: boolean;
 }
 
@@ -28,7 +28,7 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<TaskFormData>({
+  } = useForm({
     resolver: zodResolver(taskSchema),
     defaultValues: {
       title: '',
@@ -54,7 +54,7 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
           aria-invalid={!!errors.title}
           aria-describedby={errors.title ? 'title-error' : undefined}
           placeholder="e.g., Design database schema"
-          className="bg-background/50 border-border/50 focus:border-primary h-11 px-4 rounded-xl"
+          className="bg-background border-border focus:border-primary/80 h-11 px-4 rounded-lg shadow-sm"
         />
         {errors.title && (
           <p id="title-error" role="alert" className="text-xs font-semibold text-destructive mt-1">
@@ -75,7 +75,7 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
           aria-describedby={errors.description ? 'description-error' : undefined}
           placeholder="Detail the tasks, requirements, or links..."
           rows={4}
-          className="bg-background/50 border-border/50 focus:border-primary px-4 py-3 rounded-xl resize-none"
+          className="bg-background border-border focus:border-primary/80 px-4 py-3 rounded-lg resize-none shadow-sm"
         />
         {errors.description && (
           <p id="description-error" role="alert" className="text-xs font-semibold text-destructive mt-1">
@@ -92,9 +92,9 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
           </span>
           <Select
             defaultValue={defaultValues?.status || 'TODO'}
-            onValueChange={(v) => setValue('status', v as TaskFormData['status'])}
+            onValueChange={(v) => setValue('status', v)}
           >
-            <SelectTrigger aria-labelledby="status-select-label" className="bg-background border-border h-11 rounded-xl cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
+            <SelectTrigger aria-labelledby="status-select-label" className="bg-background border-border h-11 rounded-lg cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
               <SelectValue placeholder="Status">
                 {(value) => {
                   const labels: Record<string, string> = {
@@ -106,7 +106,7 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
                 }}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="glass-card">
+            <SelectContent className="bg-popover border border-border/80 shadow-lg rounded-lg min-w-[144px]">
               <SelectItem value="TODO">To Do</SelectItem>
               <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
               <SelectItem value="DONE">Done</SelectItem>
@@ -125,9 +125,9 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
           </span>
           <Select
             defaultValue={defaultValues?.priority || 'MEDIUM'}
-            onValueChange={(v) => setValue('priority', v as TaskFormData['priority'])}
+            onValueChange={(v) => setValue('priority', v)}
           >
-            <SelectTrigger aria-labelledby="priority-select-label" className="bg-background border-border h-11 rounded-xl cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
+            <SelectTrigger aria-labelledby="priority-select-label" className="bg-background border-border h-11 rounded-lg cursor-pointer text-xs font-bold text-foreground hover:bg-accent/50 shadow-sm transition-all focus-ring">
               <SelectValue placeholder="Priority">
                 {(value) => {
                   const labels: Record<string, string> = {
@@ -139,7 +139,7 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
                 }}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="glass-card">
+            <SelectContent className="bg-popover border border-border/80 shadow-lg rounded-lg min-w-[144px]">
               <SelectItem value="LOW">Low</SelectItem>
               <SelectItem value="MEDIUM">Medium</SelectItem>
               <SelectItem value="HIGH">High</SelectItem>
@@ -164,7 +164,7 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
           {...register('dueDate')}
           aria-invalid={!!errors.dueDate}
           aria-describedby={errors.dueDate ? 'dueDate-error' : undefined}
-          className="bg-background/50 border-border/50 focus:border-primary h-11 px-4 rounded-xl cursor-pointer"
+          className="bg-background border-border focus:border-primary/80 h-11 px-4 rounded-lg cursor-pointer shadow-sm"
         />
         {errors.dueDate && (
           <p id="dueDate-error" role="alert" className="text-xs font-semibold text-destructive mt-1">
@@ -178,7 +178,7 @@ export function TaskForm({ defaultValues, onSubmit, isPending }: TaskFormProps) 
         <Button
           type="submit"
           disabled={isPending}
-          className="w-full sm:w-auto px-6 h-11 font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all cursor-pointer gap-2"
+          className="w-full sm:w-auto px-6 h-11 font-bold shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all cursor-pointer gap-2"
         >
           {isPending ? (
             <>
